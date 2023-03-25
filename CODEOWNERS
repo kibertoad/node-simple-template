@@ -1,0 +1,4 @@
+*.yml        @kibertoad
+*.md         @kibertoad
+*.ts         @kibertoad
+package.json @kibertoad
