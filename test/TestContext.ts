@@ -14,8 +14,7 @@ export function createTestContext(dependencyOverrides: DependencyOverrides = {})
   const diContainer = createContainer({
     injectionMode: 'PROXY',
   })
-  const fakeApp: Partial<FastifyInstance> = {
-  }
+  const fakeApp: Partial<FastifyInstance> = {}
   registerDependencies(
     diContainer,
     {
