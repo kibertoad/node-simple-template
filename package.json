@@ -32,7 +32,7 @@
     "@fastify/helmet": "^10.1.0",
     "@fastify/swagger": "^8.3.1",
     "@fastify/swagger-ui": "^1.5.0",
-    "@lokalise/node-core": "^4.0.0",
+    "@lokalise/node-core": "^4.1.1",
     "@prisma/client": "^4.11.0",
     "awilix": "^8.0.0",
     "dotenv": "^16.0.3",
