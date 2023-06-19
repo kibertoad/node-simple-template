@@ -20,7 +20,7 @@ import {
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import type pino from 'pino'
 
-import { getConfig, isDevelopment, isProduction, isTest } from './infrastructure/config'
+import { getConfig, isDevelopment, isTest } from './infrastructure/config'
 import type { DependencyOverrides } from './infrastructure/diConfig'
 import { registerDependencies } from './infrastructure/diConfig'
 import { errorHandler } from './infrastructure/errors/errorHandler'
