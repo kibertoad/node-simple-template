@@ -24,10 +24,9 @@ import { getConfig, isDevelopment, isTest } from './infrastructure/config'
 import type { DependencyOverrides } from './infrastructure/diConfig'
 import { registerDependencies } from './infrastructure/diConfig'
 import { errorHandler } from './infrastructure/errors/errorHandler'
-import { runAllHealthchecks } from './infrastructure/healthchecks'
+import { registerHealthChecks, runAllHealthchecks } from './infrastructure/healthchecks'
 import { resolveLoggerConfiguration } from './infrastructure/logger'
 import { getRoutes } from './modules/routes'
-import { healthcheckPlugin } from './plugins/healthcheckPlugin'
 
 const GRACEFUL_SHUTDOWN_TIMEOUT_IN_MSECS = 10000
 
@@ -122,13 +121,7 @@ export async function getApp(
         },
       ],
       components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
-          },
-        },
+        securitySchemes: {},
       },
     },
   })
@@ -147,17 +140,18 @@ export async function getApp(
     dependencyOverrides,
   )
 
-  await app.register(customHealthCheck, {
-    path: '/health',
-    logLevel: 'warn',
-    info: {
-      env: appConfig.nodeEnv,
-      app_version: appConfig.appVersion,
-    },
-    schema: false,
-    exposeFailure: false,
-  })
-  await app.register(healthcheckPlugin)
+  if (configOverrides.healthchecksEnabled !== false) {
+    await app.register(customHealthCheck, {
+      path: '/health',
+      logLevel: 'warn',
+      info: {
+        env: appConfig.nodeEnv,
+        app_version: appConfig.appVersion,
+      },
+      schema: false,
+      exposeFailure: false,
+    })
+  }
 
   app.after(() => {
     // Register routes
@@ -171,12 +165,16 @@ export async function getApp(
         next()
       })
     }
+
+    if (configOverrides.healthchecksEnabled !== false) {
+      registerHealthChecks(app)
+    }
   })
 
   try {
     await app.ready()
     if (!isTest() && configOverrides.healthchecksEnabled !== false) {
-      await runAllHealthchecks(app.diContainer.cradle)
+      await runAllHealthchecks(app)
     }
   } catch (err) {
     app.log.error('Error while initializing app: ', err)

@@ -1,24 +1,50 @@
-import { InternalError } from '@lokalise/node-core'
-import type { PrismaClient } from '@prisma/client'
+import { types } from 'node:util'
 
-import type { Dependencies } from './diConfig'
-import { executeAsyncAndHandleGlobalErrors } from './errors/globalErrorHandler'
+import type { Either } from '@lokalise/node-core'
+import { executeAsyncAndHandleGlobalErrors } from '@lokalise/node-core'
+import type { FastifyInstance } from 'fastify'
 
-const HEALTHCHECK_ERROR_CODE = 'HEALTHCHECK_ERROR'
+export type HealthCheck = (app: FastifyInstance) => Promise<Either<Error, true>>
 
-export async function testDbHealth(prisma: PrismaClient) {
-  const response = await prisma.$queryRaw`SELECT 1`
-  if (!response) {
-    throw new InternalError({
-      message: 'Database did not respond correctly',
-      errorCode: HEALTHCHECK_ERROR_CODE,
-    })
+export const wrapHealthCheck = (app: FastifyInstance, healthCheck: HealthCheck) => {
+  return async () => {
+    const response = await healthCheck(app)
+    if (response.error) {
+      throw response.error
+    }
   }
 }
 
-export async function runAllHealthchecks(dependencies: Dependencies) {
+export const dbHealthCheck: HealthCheck = async (app): Promise<Either<Error, true>> => {
+  const prisma = app.diContainer.cradle.prisma
+  try {
+    const response = await prisma.$queryRaw`SELECT 1`
+    if (!response) {
+      return {
+        error: new Error('DB healthcheck got an unexpected response'),
+      }
+    }
+  } catch (error) {
+    if (types.isNativeError(error)) {
+      return {
+        error: new Error(`An error occurred during DB healthcheck: ${error.message}`),
+      }
+    }
+    return {
+      error: new Error('An unexpected error occurred during DB healthcheck'),
+    }
+  }
+  return { result: true }
+}
+
+export function registerHealthChecks(app: FastifyInstance) {
+  app.addHealthCheck('heartbeat', () => true)
+  app.addHealthCheck('postgresql', wrapHealthCheck(app, dbHealthCheck))
+}
+
+export async function runAllHealthchecks(app: FastifyInstance) {
   return executeAsyncAndHandleGlobalErrors(
-    () => Promise.all([testDbHealth(dependencies.prisma)]),
+    () => Promise.all([wrapHealthCheck(app, dbHealthCheck)()]),
     false,
   )
 }
