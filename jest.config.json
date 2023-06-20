@@ -1,7 +1,5 @@
 {
-  "setupFiles": [
-    "<rootDir>/test/dotenvConfig.ts"
-  ],
+  "setupFiles": ["<rootDir>/test/dotenvConfig.ts"],
   "moduleFileExtensions": ["ts", "js", "json"],
   "testMatch": ["<rootDir>/src/**/*.(spec|test).ts", "<rootDir>/test/**/*.(spec|test).ts"],
 

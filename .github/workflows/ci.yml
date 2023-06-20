@@ -27,7 +27,7 @@ jobs:
 
       - name: Docker start
         run: |
-          docker compose up waitpostgre
+          docker compose up waitpostgres
 
       - name: Build TS
         run: |
