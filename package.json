@@ -29,7 +29,7 @@
     "@fastify/auth": "^4.3.0",
     "@fastify/awilix": "^3.1.0",
     "@fastify/cors": "^8.3.0",
-    "@fastify/helmet": "^10.1.1",
+    "@fastify/helmet": "^11.0.0",
     "@fastify/swagger": "^8.6.0",
     "@fastify/swagger-ui": "^1.9.0",
     "@lokalise/node-core": "^5.8.1",
