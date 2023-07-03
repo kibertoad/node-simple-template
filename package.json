@@ -31,7 +31,7 @@
     "@fastify/cors": "^8.3.0",
     "@fastify/helmet": "^10.1.1",
     "@fastify/swagger": "^8.6.0",
-    "@fastify/swagger-ui": "^1.9.0",
+    "@fastify/swagger-ui": "^1.9.2",
     "@lokalise/node-core": "^5.8.1",
     "@prisma/client": "^4.16.0",
     "awilix": "^8.0.1",
