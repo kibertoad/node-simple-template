@@ -1,17 +1,12 @@
-import { PrismaClient } from '@prisma/client'
 import type { AwilixContainer, Resolver } from 'awilix'
-import { asClass, asFunction, Lifetime } from 'awilix'
+import { Lifetime } from 'awilix'
 import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
-import { pino } from 'pino'
 
-import { FakeStoreApiClient } from '../integrations/FakeStoreApiClient'
-import { UserRepository } from '../modules/users/repositories/UserRepository'
-import { PermissionsService } from '../modules/users/services/PermissionsService'
-import { UserService } from '../modules/users/services/UserService'
+import type { UsersModuleDependencies } from '../modules/users/diConfig'
+import { resolveUsersConfig } from '../modules/users/diConfig'
 
-import type { Config } from './config'
-import { getConfig } from './config'
-import type { ErrorReporter } from './errors/errorReporter'
+import type { CommonDependencies } from './commonDiConfig'
+import { resolveCommonDiConfig } from './commonDiConfig'
 
 export type ExternalDependencies = {
   app?: FastifyInstance
@@ -27,43 +22,8 @@ export function registerDependencies(
   dependencyOverrides: DependencyOverrides = {},
 ): void {
   const diConfig: DiConfig = {
-    logger: asFunction(() => dependencies.logger ?? pino(), SINGLETON_CONFIG),
-
-    prisma: asFunction(
-      ({ config }: Dependencies) => {
-        return new PrismaClient({
-          datasources: {
-            db: {
-              url: config.db.databaseUrl,
-            },
-          },
-        })
-      },
-      {
-        dispose: (prisma) => {
-          return prisma.$disconnect()
-        },
-        lifetime: Lifetime.SINGLETON,
-      },
-    ),
-
-    config: asFunction(() => {
-      return getConfig()
-    }, SINGLETON_CONFIG),
-
-    userRepository: asClass(UserRepository, SINGLETON_CONFIG),
-    userService: asClass(UserService, SINGLETON_CONFIG),
-
-    permissionsService: asClass(PermissionsService, SINGLETON_CONFIG),
-
-    errorReporter: asFunction(() => {
-      return {
-        // todo
-        report: (report) => console.log(report),
-      } satisfies ErrorReporter
-    }),
-
-    fakeStoreApiClient: asClass(FakeStoreApiClient, SINGLETON_CONFIG),
+    ...resolveCommonDiConfig(dependencies),
+    ...resolveUsersConfig(),
   }
   diContainer.register(diConfig)
 
@@ -75,21 +35,7 @@ export function registerDependencies(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DiConfig = Record<keyof Dependencies, Resolver<any>>
 
-export interface Dependencies {
-  config: Config
-  logger: FastifyBaseLogger
-
-  prisma: PrismaClient
-
-  userRepository: UserRepository
-  userService: UserService
-
-  permissionsService: PermissionsService
-
-  // vendor-specific dependencies
-  errorReporter: ErrorReporter
-  fakeStoreApiClient: FakeStoreApiClient
-}
+export type Dependencies = CommonDependencies & UsersModuleDependencies
 
 declare module '@fastify/awilix' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

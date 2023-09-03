@@ -1,7 +1,7 @@
 import type { User } from '@prisma/client'
 
-import type { Dependencies } from '../../../infrastructure/diConfig'
 import { EntityNotFoundError } from '../../../infrastructure/errors/publicErrors'
+import type { UsersInjectableDependencies } from '../diConfig'
 import type { UserRepository } from '../repositories/UserRepository'
 import type {
   CREATE_USER_BODY_SCHEMA_TYPE,
@@ -16,7 +16,7 @@ export type UserUpdateDTO = UPDATE_USER_BODY_SCHEMA_TYPE
 export class UserService {
   private readonly userRepository: UserRepository
 
-  constructor({ userRepository }: Dependencies) {
+  constructor({ userRepository }: UsersInjectableDependencies) {
     this.userRepository = userRepository
   }
 
