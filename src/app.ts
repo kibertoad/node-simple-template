@@ -18,7 +18,6 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import type pino from 'pino'
 
 import { getConfig, isDevelopment, isTest } from './infrastructure/config'
 import type { DependencyOverrides } from './infrastructure/diConfig'
@@ -43,13 +42,15 @@ export type RequestContext = {
 export async function getApp(
   configOverrides: ConfigOverrides = {},
   dependencyOverrides: DependencyOverrides = {},
-): Promise<FastifyInstance<http.Server, http.IncomingMessage, http.ServerResponse, pino.Logger>> {
+): Promise<
+  FastifyInstance<http.Server, http.IncomingMessage, http.ServerResponse, FastifyBaseLogger>
+> {
   const config = getConfig()
   const appConfig = config.app
   const loggerConfig = resolveLoggerConfiguration(appConfig)
   const enableRequestLogging = ['debug', 'trace'].includes(appConfig.logLevel)
 
-  const app = fastify<http.Server, http.IncomingMessage, http.ServerResponse, pino.Logger>({
+  const app = fastify<http.Server, http.IncomingMessage, http.ServerResponse, FastifyBaseLogger>({
     logger: loggerConfig,
     disableRequestLogging: !enableRequestLogging,
   })

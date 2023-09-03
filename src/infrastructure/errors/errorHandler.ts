@@ -16,7 +16,7 @@ type ResponseObject = {
   statusCode: number
   payload: {
     message: string
-    errorCode: string | unknown
+    errorCode: string
     details?: FreeformRecord
   }
 }

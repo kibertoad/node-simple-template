@@ -1,8 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import type { AwilixContainer, Resolver } from 'awilix'
 import { asClass, asFunction, Lifetime } from 'awilix'
-import type { FastifyInstance, FastifyLoggerInstance } from 'fastify'
-import type P from 'pino'
+import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
 import { pino } from 'pino'
 
 import { FakeStoreApiClient } from '../integrations/FakeStoreApiClient'
@@ -16,7 +15,7 @@ import type { ErrorReporter } from './errors/errorReporter'
 
 export type ExternalDependencies = {
   app?: FastifyInstance
-  logger?: P.Logger
+  logger?: FastifyBaseLogger
 }
 export const SINGLETON_CONFIG = { lifetime: Lifetime.SINGLETON }
 
@@ -73,11 +72,12 @@ export function registerDependencies(
   }
 }
 
-type DiConfig = Record<keyof Dependencies, Resolver<unknown>>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DiConfig = Record<keyof Dependencies, Resolver<any>>
 
 export interface Dependencies {
   config: Config
-  logger: FastifyLoggerInstance & P.Logger
+  logger: FastifyBaseLogger
 
   prisma: PrismaClient
 

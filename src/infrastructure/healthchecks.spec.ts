@@ -16,7 +16,7 @@ const createPrismaMock = (shouldSucceed: boolean) =>
         "Can't reach database server at `test-service.server.test`:`1234`\n\nPlease make sure your database server is running at `test-service.server.test`:`1234`.",
       )
     },
-  } as Pick<PrismaClient, '$queryRaw'>)
+  }) as Pick<PrismaClient, '$queryRaw'>
 
 describe('healthcheck', () => {
   let app: FastifyInstance
