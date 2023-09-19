@@ -1,4 +1,4 @@
-import { ConfigScope, createRangeValidator } from '@lokalise/node-core'
+import { ConfigScope } from '@lokalise/node-core'
 
 const configScope: ConfigScope = new ConfigScope()
 
@@ -34,7 +34,7 @@ export function getConfig(): Config {
         baseUrl: configScope.getMandatory('SAMPLE_FAKE_STORE_BASE_URL'),
       },
     },
-    }
+  }
 }
 
 export function getDbConfig(): DbConfig {

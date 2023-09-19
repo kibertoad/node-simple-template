@@ -27,11 +27,7 @@ import {
 } from 'fastify-type-provider-zod'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 
-import {
-  getConfig,
-  isDevelopment,
-  isTest,
-} from './infrastructure/config'
+import { getConfig, isDevelopment, isTest } from './infrastructure/config'
 import type { DependencyOverrides } from './infrastructure/diConfig'
 import { registerDependencies } from './infrastructure/diConfig'
 import { errorHandler } from './infrastructure/errors/errorHandler'
@@ -161,8 +157,7 @@ export async function getApp(
       logger: app.log,
     },
     dependencyOverrides,
-    {
-    },
+    {},
   )
 
   if (configOverrides.monitoringEnabled) {
@@ -191,9 +186,7 @@ export async function getApp(
 
     if (configOverrides.monitoringEnabled) {
       await app.register(healthcheckMetricsPlugin, {
-        healthChecks: [
-          wrapHealthCheckForPrometheus(dbHealthCheck, 'mysql'),
-        ],
+        healthChecks: [wrapHealthCheckForPrometheus(dbHealthCheck, 'mysql')],
       })
     }
   }

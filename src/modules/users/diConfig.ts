@@ -2,7 +2,7 @@ import type { User } from '@prisma/client'
 import type { Resolver } from 'awilix'
 import { asClass, asFunction, Lifetime } from 'awilix'
 import type { InMemoryCacheConfiguration, LoaderConfig } from 'layered-loader'
-import { Loader, createNotificationPair, RedisCache } from 'layered-loader'
+import { Loader } from 'layered-loader'
 
 import type { CommonDependencies } from '../../infrastructure/commonDiConfig'
 import type { DIOptions } from '../../infrastructure/diConfig'
@@ -40,7 +40,7 @@ export type UsersPublicDependencies = Pick<
   'userService' | 'permissionsService'
 >
 
-export function resolveUsersConfig(options: DIOptions): UsersDiConfig {
+export function resolveUsersConfig(_options: DIOptions): UsersDiConfig {
   return {
     userRepository: asClass(UserRepository, SINGLETON_CONFIG),
     userService: asClass(UserService, SINGLETON_CONFIG),

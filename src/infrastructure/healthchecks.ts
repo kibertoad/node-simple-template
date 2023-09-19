@@ -60,8 +60,5 @@ export const dbHealthCheck: HealthChecker = async (app): Promise<Either<Error, t
 }
 
 export async function runAllHealthchecks(app: FastifyInstance) {
-  return executeSettleAllAndHandleGlobalErrors(
-    [wrapHealthCheck(app, dbHealthCheck)()],
-    false,
-  )
+  return executeSettleAllAndHandleGlobalErrors([wrapHealthCheck(app, dbHealthCheck)()], false)
 }
