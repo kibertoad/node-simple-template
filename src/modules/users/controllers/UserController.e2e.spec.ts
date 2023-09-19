@@ -58,9 +58,17 @@ describe('UserController', () => {
       expect(response.statusCode).toBe(201)
       const { id } = response.json<GET_USER_SCHEMA_RESPONSE_SCHEMA_TYPE>().data
 
-      const response1 = await app.inject().get(`/users/${id}`).end()
+      const response1 = await app
+        .inject()
+        .get(`/users/${id}`)
 
-      const response2 = await app.inject().get(`/users/${id}`).end()
+        .end()
+
+      const response2 = await app
+        .inject()
+        .get(`/users/${id}`)
+
+        .end()
 
       expect(response1.statusCode).toBe(200)
       expect(response2.statusCode).toBe(200)
@@ -87,7 +95,11 @@ describe('UserController', () => {
 
         .end()
 
-      const response2 = await app.inject().get(`/users/${id}`).end()
+      const response2 = await app
+        .inject()
+        .get(`/users/${id}`)
+
+        .end()
 
       expect(response1.statusCode).toBe(200)
       expect(response2.statusCode).toBe(404)
@@ -106,7 +118,11 @@ describe('UserController', () => {
       expect(response.statusCode).toBe(201)
       const { id } = response.json<GET_USER_SCHEMA_RESPONSE_SCHEMA_TYPE>().data
 
-      const response1 = await app.inject().get(`/users/${id}`).end()
+      const response1 = await app
+        .inject()
+        .get(`/users/${id}`)
+
+        .end()
 
       const updateResponse = await app
         .inject()
@@ -114,6 +130,7 @@ describe('UserController', () => {
         .body({
           name: 'updated',
         } satisfies UPDATE_USER_BODY_SCHEMA_TYPE)
+
         .end()
 
       const response2 = await app

@@ -1,4 +1,5 @@
 import type { User } from '@prisma/client'
+import type { Loader } from 'layered-loader'
 
 import { EntityNotFoundError } from '../../../infrastructure/errors/publicErrors'
 import type { UsersInjectableDependencies } from '../diConfig'
@@ -15,9 +16,11 @@ export type UserUpdateDTO = UPDATE_USER_BODY_SCHEMA_TYPE
 
 export class UserService {
   private readonly userRepository: UserRepository
+  private readonly userLoader: Loader<User>
 
-  constructor({ userRepository }: UsersInjectableDependencies) {
+  constructor({ userRepository, userLoader }: UsersInjectableDependencies) {
     this.userRepository = userRepository
+    this.userLoader = userLoader
   }
 
   async createUser(user: UserCreateDTO) {
@@ -25,11 +28,13 @@ export class UserService {
       name: user.name ?? null,
       email: user.email,
     })
+    await this.userLoader.invalidateCacheFor(newUser.id.toString())
     return newUser
   }
 
   async getUser(id: number): Promise<User> {
-    const getUserResult = await this.userRepository.getUser(id)
+    const getUserResult =
+      this.userLoader.getInMemoryOnly(id.toString()) ?? (await this.userLoader.get(id.toString()))
 
     if (!getUserResult) {
       throw new EntityNotFoundError({ message: 'User not found', details: { id } })
@@ -40,10 +45,12 @@ export class UserService {
 
   async deleteUser(id: number): Promise<void> {
     await this.userRepository.deleteUser(id)
+    await this.userLoader.invalidateCacheFor(id.toString())
   }
 
   async updateUser(id: number, updatedData: UserUpdateDTO) {
     await this.userRepository.updateUser(id, updatedData)
+    await this.userLoader.invalidateCacheFor(id.toString())
   }
 
   async getUsers(userIds: number[]): Promise<UserDTO[]> {
@@ -53,7 +60,8 @@ export class UserService {
   }
 
   async findUserById(id: number): Promise<UserDTO | null> {
-    const getUserResult = await this.userRepository.getUser(id)
+    const getUserResult =
+      this.userLoader.getInMemoryOnly(id.toString()) ?? (await this.userLoader.get(id.toString()))
 
     return getUserResult ?? null
   }

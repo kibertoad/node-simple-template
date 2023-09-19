@@ -1,3 +1,4 @@
+import { globalLogger } from '@lokalise/node-core'
 import type { AwilixContainer, Resolver } from 'awilix'
 import { Lifetime } from 'awilix'
 import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
@@ -10,20 +11,29 @@ import { resolveCommonDiConfig } from './commonDiConfig'
 
 export type ExternalDependencies = {
   app?: FastifyInstance
-  logger?: FastifyBaseLogger
+  logger: FastifyBaseLogger
 }
 export const SINGLETON_CONFIG = { lifetime: Lifetime.SINGLETON }
 
 export type DependencyOverrides = Partial<DiConfig>
 
+export type DIOptions = {
+  jobsEnabled?: boolean
+}
+
 export function registerDependencies(
   diContainer: AwilixContainer,
-  dependencies: ExternalDependencies = {},
+  dependencies: ExternalDependencies = { logger: globalLogger },
   dependencyOverrides: DependencyOverrides = {},
+  options: DIOptions = {},
 ): void {
+  const areJobsEnabled = !!options.jobsEnabled
+
   const diConfig: DiConfig = {
     ...resolveCommonDiConfig(dependencies),
-    ...resolveUsersConfig(),
+    ...resolveUsersConfig({
+      jobsEnabled: areJobsEnabled,
+    }),
   }
   diContainer.register(diConfig)
 

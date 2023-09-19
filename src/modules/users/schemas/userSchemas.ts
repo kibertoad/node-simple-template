@@ -1,8 +1,9 @@
+import { toNumberPreprocessor } from '@lokalise/zod-extras'
 import z from 'zod'
 
 export const CREATE_USER_BODY_SCHEMA = z.object({
   name: z.string(),
-  age: z.optional(z.nullable(z.coerce.number())),
+  age: z.optional(z.nullable(z.preprocess(toNumberPreprocessor, z.number()))),
   email: z.string().email(),
 })
 
@@ -12,21 +13,21 @@ export const UPDATE_USER_BODY_SCHEMA = z.object({
 })
 
 export const GET_USER_PARAMS_SCHEMA = z.object({
-  userId: z.coerce.number(),
+  userId: z.preprocess(toNumberPreprocessor, z.number()),
 })
 
 export const UPDATE_USER_PARAMS_SCHEMA = z.object({
-  userId: z.coerce.number(),
+  userId: z.preprocess(toNumberPreprocessor, z.number()),
 })
 
 export const DELETE_USER_PARAMS_SCHEMA = z.object({
-  userId: z.coerce.number(),
+  userId: z.preprocess(toNumberPreprocessor, z.number()),
 })
 
 export const USER_SCHEMA = z.object({
   id: z.number(),
   name: z.string(),
-  age: z.optional(z.nullable(z.coerce.number())),
+  age: z.optional(z.nullable(z.preprocess(toNumberPreprocessor, z.number()))),
   email: z.string().email(),
 })
 

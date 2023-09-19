@@ -1,15 +1,23 @@
+/* eslint-disable max-statements */
+
 import type http from 'http'
 
-import fastifyAuth from '@fastify/auth'
 import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix'
 import { fastifyCors } from '@fastify/cors'
 import fastifyHelmet from '@fastify/helmet'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
+import {
+  getRequestIdFastifyAppConfig,
+  metricsPlugin,
+  requestContextProviderPlugin,
+  publicHealthcheckPlugin,
+  healthcheckMetricsPlugin,
+} from '@lokalise/fastify-extras'
+import { resolveGlobalErrorLogObject } from '@lokalise/node-core'
 import type { AwilixContainer } from 'awilix'
 import fastify from 'fastify'
 import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
-import customHealthCheck from 'fastify-custom-healthcheck'
 import fastifyGracefulShutdown from 'fastify-graceful-shutdown'
 import fastifyNoIcon from 'fastify-no-icon'
 import {
@@ -23,7 +31,11 @@ import { getConfig, isDevelopment, isTest } from './infrastructure/config'
 import type { DependencyOverrides } from './infrastructure/diConfig'
 import { registerDependencies } from './infrastructure/diConfig'
 import { errorHandler } from './infrastructure/errors/errorHandler'
-import { registerHealthChecks, runAllHealthchecks } from './infrastructure/healthchecks'
+import {
+  dbHealthCheck,
+  runAllHealthchecks,
+  wrapHealthCheckForPrometheus,
+} from './infrastructure/healthchecks'
 import { resolveLoggerConfiguration } from './infrastructure/logger'
 import { getRoutes } from './modules/routes'
 
@@ -32,11 +44,7 @@ const GRACEFUL_SHUTDOWN_TIMEOUT_IN_MSECS = 10000
 export type ConfigOverrides = {
   diContainer?: AwilixContainer
   healthchecksEnabled?: boolean
-}
-
-export type RequestContext = {
-  logger?: FastifyBaseLogger
-  reqId: string
+  monitoringEnabled?: boolean
 }
 
 export async function getApp(
@@ -51,6 +59,7 @@ export async function getApp(
   const enableRequestLogging = ['debug', 'trace'].includes(appConfig.logLevel)
 
   const app = fastify<http.Server, http.IncomingMessage, http.ServerResponse, FastifyBaseLogger>({
+    ...getRequestIdFastifyAppConfig(),
     logger: loggerConfig,
     disableRequestLogging: !enableRequestLogging,
   })
@@ -94,7 +103,6 @@ export async function getApp(
 
   await app.register(fastifyNoIcon)
 
-  await app.register(fastifyAuth)
   await app.register(fastifySwagger, {
     transform: createJsonSchemaTransform({
       skipList: [
@@ -122,13 +130,23 @@ export async function getApp(
         },
       ],
       components: {
-        securitySchemes: {},
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
       },
     },
   })
 
   await app.register(fastifySwaggerUi)
-  await app.register(fastifyAwilixPlugin, { disposeOnClose: true })
+  await app.register(fastifyAwilixPlugin, {
+    disposeOnClose: true,
+    asyncDispose: true,
+    asyncInit: true,
+  })
 
   app.setErrorHandler(errorHandler)
 
@@ -139,20 +157,40 @@ export async function getApp(
       logger: app.log,
     },
     dependencyOverrides,
+    {},
   )
 
-  if (configOverrides.healthchecksEnabled !== false) {
-    await app.register(customHealthCheck, {
-      path: '/health',
-      logLevel: 'warn',
-      info: {
-        env: appConfig.nodeEnv,
-        app_version: appConfig.appVersion,
-      },
-      schema: false,
-      exposeFailure: false,
+  if (configOverrides.monitoringEnabled) {
+    await app.register(metricsPlugin, {
+      bindAddress: appConfig.bindAddress,
+      errorObjectResolver: resolveGlobalErrorLogObject,
+      loggerOptions: loggerConfig,
+      disablePrometheusRequestLogging: true,
     })
   }
+
+  if (configOverrides.healthchecksEnabled !== false) {
+    await app.register(publicHealthcheckPlugin, {
+      url: '/health',
+      healthChecks: [
+        {
+          name: 'mysql',
+          isMandatory: true,
+          checker: dbHealthCheck,
+        },
+      ],
+      responsePayload: {
+        version: appConfig.appVersion,
+      },
+    })
+
+    if (configOverrides.monitoringEnabled) {
+      await app.register(healthcheckMetricsPlugin, {
+        healthChecks: [wrapHealthCheckForPrometheus(dbHealthCheck, 'mysql')],
+      })
+    }
+  }
+  await app.register(requestContextProviderPlugin)
 
   app.after(() => {
     // Register routes
@@ -165,10 +203,6 @@ export async function getApp(
         app.log.info('Starting graceful shutdown')
         next()
       })
-    }
-
-    if (configOverrides.healthchecksEnabled !== false) {
-      registerHealthChecks(app)
     }
   })
 
