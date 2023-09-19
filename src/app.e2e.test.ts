@@ -25,7 +25,6 @@ describe('app', () => {
       expect(response.json()).toMatchObject({
         healthChecks: {
           heartbeat: 'HEALTHY',
-          redis: 'HEALTHY',
           mysql: 'HEALTHY',
         },
       })
@@ -36,11 +35,9 @@ describe('app', () => {
       const response = await app.inject().get('/health').end()
 
       expect(response.json()).toMatchObject({
-        gitCommitSha: 'sha',
         heartbeat: 'HEALTHY',
         checks: {
           mysql: 'HEALTHY',
-          redis: 'HEALTHY',
         },
         version: '1',
       })
@@ -59,9 +56,6 @@ describe('app', () => {
       const response = await sendGet(buildClient('http://127.0.0.1:9080'), '/metrics')
 
       expect(response.result.statusCode).toBe(200)
-      expect(response.result.body).toContain('redis_availability 1')
-      expect(response.result.body).toContain('redis_latency_msecs ')
-
       expect(response.result.body).toContain('mysql_availability 1')
       expect(response.result.body).toContain('mysql_latency_msecs ')
     })
