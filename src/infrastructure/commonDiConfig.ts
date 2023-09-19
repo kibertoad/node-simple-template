@@ -1,10 +1,14 @@
+import { reportErrorToBugsnag } from '@lokalise/fastify-extras'
 import type { ErrorReporter } from '@lokalise/node-core'
-import { globalLogger } from '@lokalise/node-core'
+import { globalLogger, InternalError } from '@lokalise/node-core'
 import { PrismaClient } from '@prisma/client'
 import type { Resolver } from 'awilix'
 import { asClass, asFunction, Lifetime } from 'awilix'
 import type { FastifyBaseLogger } from 'fastify'
+import Redis from 'ioredis'
+import type P from 'pino'
 import { pino } from 'pino'
+import { ToadScheduler } from 'toad-scheduler'
 
 import { FakeStoreApiClient } from '../integrations/FakeStoreApiClient'
 
@@ -46,22 +50,20 @@ export function resolveCommonDiConfig(
 
     errorReporter: asFunction(() => {
       return {
-        // todo
-        report: (report) => console.log(report),
+        report: (report) => console.error(report),
       } satisfies ErrorReporter
     }),
-
     fakeStoreApiClient: asClass(FakeStoreApiClient, SINGLETON_CONFIG),
   }
 }
 
 export type CommonDependencies = {
   config: Config
-  logger: FastifyBaseLogger
+  logger: FastifyBaseLogger & P.Logger
 
   prisma: PrismaClient
 
-  // vendor-specific dependencies
   errorReporter: ErrorReporter
+
   fakeStoreApiClient: FakeStoreApiClient
 }
