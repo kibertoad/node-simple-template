@@ -32,7 +32,7 @@
     "@fastify/swagger": "^8.11.0",
     "@fastify/swagger-ui": "^1.10.0",
     "@lokalise/fastify-extras": "^14.2.1",
-    "@lokalise/node-core": "^6.3.2",
+    "@lokalise/node-core": "^6.4.0",
     "@lokalise/zod-extras": "^2.0.0",
     "@prisma/client": "^5.3.1",
     "@prisma/instrumentation": "^5.3.1",
