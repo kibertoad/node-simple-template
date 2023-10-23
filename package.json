@@ -46,7 +46,7 @@
     "fastify-no-icon": "^6.0.0",
     "fastify-type-provider-zod": "^1.1.9",
     "layered-loader": "^12.3.0",
-    "pino": "^8.16.0",
+    "pino": "^8.16.1",
     "pino-pretty": "^10.2.3",
     "undici": "^5.26.3",
     "validation-utils": "^9.1.0",
