@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@fastify/awilix": "^4.0.0",
-    "@fastify/cors": "^8.5.0",
+    "@fastify/cors": "^9.0.0",
     "@fastify/helmet": "^11.1.1",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^2.1.0",
@@ -39,7 +39,7 @@
     "awilix": "^10.0.1",
     "awilix-manager": "^4.0.0",
     "dotenv": "^16.3.2",
-    "fastify": "^4.25.2",
+    "fastify": "^4.26.0",
     "fastify-custom-healthcheck": "^3.1.0",
     "fastify-graceful-shutdown": "^3.5.1",
     "fastify-metrics": "^10.6.0",
