@@ -44,7 +44,7 @@
     "fastify-graceful-shutdown": "^3.5.3",
     "fastify-metrics": "^11.0.0",
     "fastify-no-icon": "^6.0.0",
-    "fastify-type-provider-zod": "^1.1.9",
+    "fastify-type-provider-zod": "^1.2.0",
     "layered-loader": "^13.1.0",
     "pino": "^8.21.0",
     "pino-pretty": "^11.0.0",
