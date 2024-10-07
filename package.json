@@ -36,7 +36,7 @@
     "@lokalise/zod-extras": "^2.1.0",
     "@prisma/client": "^5.20.0",
     "@prisma/instrumentation": "^5.20.0",
-    "awilix": "^11.0.0",
+    "awilix": "^12.0.2",
     "awilix-manager": "^5.5.0",
     "dotenv": "^16.4.5",
     "fastify": "^4.27.0",
