@@ -49,7 +49,7 @@
     "pino": "^8.21.0",
     "pino-pretty": "^11.2.2",
     "undici": "^6.19.8",
-    "validation-utils": "^11.0.0",
+    "validation-utils": "^11.0.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
