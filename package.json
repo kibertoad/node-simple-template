@@ -65,7 +65,7 @@
     "eslint-plugin-prettier": "^5.2.4",
     "eslint-plugin-vitest": "^0.5.4",
     "ioredis": "^5.6.0",
-    "mockttp": "^3.16.0",
+    "mockttp": "^3.17.0",
     "oas-validator": "^5.0.8",
     "prettier": "^3.5.3",
     "prisma": "^6.5.0",
