@@ -31,7 +31,7 @@
     "@fastify/helmet": "^11.1.1",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^3.1.0",
-    "@lokalise/fastify-extras": "^17.1.1",
+    "@lokalise/fastify-extras": "^28.0.0",
     "@lokalise/node-core": "^9.22.0",
     "@lokalise/zod-extras": "^2.1.0",
     "@prisma/client": "^6.9.0",
