@@ -1,7 +1,6 @@
 import { getLocal } from 'mockttp'
-
-import type { TestContext } from '../../test/TestContext'
-import { createTestContext, destroyTestContext } from '../../test/TestContext'
+import type { TestContext } from '../../test/TestContext.ts'
+import { createTestContext, destroyTestContext } from '../../test/TestContext.ts'
 
 const JSON_HEADERS = {
   'content-type': 'application/json',

@@ -6,15 +6,15 @@ export class PermissionsService {
     this.permissions = {}
   }
 
-  async setPermissions(userId: number, permissions: string[]) {
+  setPermissions(userId: number, permissions: string[]) {
     this.permissions[userId] = permissions
     return Promise.resolve()
   }
 
-  async getUserPermissionsBulk(userIds: number[]) {
+  getUserPermissionsBulk(userIds: number[]) {
     const result = Object.entries(this.permissions)
       .filter((entry) => {
-        return userIds.includes(Number.parseInt(entry[0]))
+        return userIds.includes(Number.parseInt(entry[0], 10))
       })
       .map((entry) => {
         return entry[1]
@@ -22,7 +22,7 @@ export class PermissionsService {
     return Promise.resolve(result)
   }
 
-  async deleteAll() {
+  deleteAll() {
     this.permissions = {}
     return Promise.resolve()
   }

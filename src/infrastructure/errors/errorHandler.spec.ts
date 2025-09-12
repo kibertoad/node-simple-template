@@ -1,15 +1,16 @@
 import { fastifyAwilixPlugin } from '@fastify/awilix'
 import { InternalError } from '@lokalise/node-core'
 import { asFunction } from 'awilix'
-import type { FastifyInstance } from 'fastify'
+import type { RouteHandlerMethod } from 'fastify'
 import fastify from 'fastify'
-import type { RouteHandlerMethod } from 'fastify/types/route'
+import { afterAll, describe, expect, it } from 'vitest'
+import type { AppInstance } from '../../app.ts'
 
-import { errorHandler } from './errorHandler'
-import { AuthFailedError } from './publicErrors'
+import { errorHandler } from './errorHandler.ts'
+import { AuthFailedError } from './publicErrors.ts'
 
-async function initApp(routeHandler: RouteHandlerMethod, awaitApp = true) {
-  const app = fastify()
+async function initApp(routeHandler: RouteHandlerMethod, awaitApp = true): Promise<AppInstance> {
+  const app: AppInstance = fastify()
   void app.register(fastifyAwilixPlugin, { disposeOnClose: true })
   app.setErrorHandler(errorHandler)
 
@@ -36,7 +37,7 @@ async function initApp(routeHandler: RouteHandlerMethod, awaitApp = true) {
 }
 
 describe('errorHandler', () => {
-  let app: FastifyInstance
+  let app: AppInstance
   afterAll(async () => {
     await app.close()
   })

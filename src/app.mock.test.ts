@@ -1,18 +1,17 @@
 import type { User } from '@prisma/client'
 import { asClass } from 'awilix'
-import type { FastifyInstance } from 'fastify'
 
-import { getApp } from './app'
-import type { Dependencies } from './infrastructure/diConfig'
-import { SINGLETON_CONFIG } from './infrastructure/diConfig'
-import { UserService } from './modules/users/services/UserService'
+import { type AppInstance, getApp } from './app.ts'
+import type { Dependencies } from './infrastructure/diConfig.ts'
+import { SINGLETON_CONFIG } from './infrastructure/diConfig.ts'
+import { UserService } from './modules/users/services/UserService.ts'
 
 class FakeUserService extends UserService {
   constructor() {
     super({} as Dependencies)
   }
 
-  async getUser(): Promise<User> {
+  override getUser(): Promise<User> {
     return Promise.resolve({
       id: -1,
       age: null,
@@ -23,7 +22,7 @@ class FakeUserService extends UserService {
 }
 
 describe('dependency mocking', () => {
-  let app: FastifyInstance
+  let app: AppInstance
   beforeAll(async () => {
     app = await getApp(
       {},

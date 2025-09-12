@@ -1,16 +1,15 @@
-import type { FastifyInstance } from 'fastify'
 import { beforeEach, expect } from 'vitest'
 
-import { cleanTables, DB_MODEL } from '../../../../test/DbCleaner'
-import { getApp } from '../../../app'
+import { cleanTables, DB_MODEL } from '../../../../test/DbCleaner.ts'
+import { type AppInstance, getApp } from '../../../app.ts'
 import type {
   CREATE_USER_BODY_SCHEMA_TYPE,
   GET_USER_SCHEMA_RESPONSE_SCHEMA_TYPE,
   UPDATE_USER_BODY_SCHEMA_TYPE,
-} from '../schemas/userSchemas'
+} from '../schemas/userSchemas.ts'
 
 describe('UserController', () => {
-  let app: FastifyInstance
+  let app: AppInstance
   beforeAll(async () => {
     app = await getApp()
   })

@@ -1,7 +1,6 @@
 /* eslint-disable max-statements */
 
-import type http from 'http'
-
+import type http from 'node:http'
 import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix'
 import { fastifyCors } from '@fastify/cors'
 import fastifyHelmet from '@fastify/helmet'
@@ -9,35 +8,34 @@ import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
 import {
   getRequestIdFastifyAppConfig,
-  metricsPlugin,
-  requestContextProviderPlugin,
-  publicHealthcheckPlugin,
   healthcheckMetricsPlugin,
+  metricsPlugin,
+  publicHealthcheckPlugin,
+  requestContextProviderPlugin,
 } from '@lokalise/fastify-extras'
-import { resolveGlobalErrorLogObject } from '@lokalise/node-core'
+import { type CommonLogger, resolveGlobalErrorLogObject, resolveLogger } from '@lokalise/node-core'
 import type { AwilixContainer } from 'awilix'
+import type { FastifyInstance } from 'fastify'
 import fastify from 'fastify'
-import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
 import fastifyGracefulShutdown from 'fastify-graceful-shutdown'
 import fastifyNoIcon from 'fastify-no-icon'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import {
   createJsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
-import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-
-import { getConfig, isDevelopment, isTest } from './infrastructure/config'
-import type { DependencyOverrides } from './infrastructure/diConfig'
-import { registerDependencies } from './infrastructure/diConfig'
-import { errorHandler } from './infrastructure/errors/errorHandler'
+import { stdSerializers } from 'pino'
+import { getConfig, isDevelopment, isTest } from './infrastructure/config.ts'
+import type { DependencyOverrides } from './infrastructure/diConfig.ts'
+import { registerDependencies } from './infrastructure/diConfig.ts'
+import { errorHandler } from './infrastructure/errors/errorHandler.ts'
 import {
   dbHealthCheck,
   runAllHealthchecks,
   wrapHealthCheckForPrometheus,
-} from './infrastructure/healthchecks'
-import { resolveLoggerConfiguration } from './infrastructure/logger'
-import { getRoutes } from './modules/routes'
+} from './infrastructure/healthchecks.ts'
+import { getRoutes } from './modules/routes.ts'
 
 const GRACEFUL_SHUTDOWN_TIMEOUT_IN_MSECS = 10000
 
@@ -47,20 +45,25 @@ export type ConfigOverrides = {
   monitoringEnabled?: boolean
 }
 
+export type AppInstance = FastifyInstance<
+  http.Server,
+  http.IncomingMessage,
+  http.ServerResponse,
+  CommonLogger
+>
+
 export async function getApp(
   configOverrides: ConfigOverrides = {},
   dependencyOverrides: DependencyOverrides = {},
-): Promise<
-  FastifyInstance<http.Server, http.IncomingMessage, http.ServerResponse, FastifyBaseLogger>
-> {
+): Promise<AppInstance> {
   const config = getConfig()
   const appConfig = config.app
-  const loggerConfig = resolveLoggerConfiguration(appConfig)
+  const logger = resolveLogger(appConfig)
   const enableRequestLogging = ['debug', 'trace'].includes(appConfig.logLevel)
 
-  const app = fastify<http.Server, http.IncomingMessage, http.ServerResponse, FastifyBaseLogger>({
+  const app = fastify<http.Server, http.IncomingMessage, http.ServerResponse, CommonLogger>({
     ...getRequestIdFastifyAppConfig(),
-    logger: loggerConfig,
+    loggerInstance: logger,
     disableRequestLogging: !enableRequestLogging,
   })
 
@@ -101,7 +104,7 @@ export async function getApp(
     })
   }
 
-  await app.register(fastifyNoIcon)
+  await app.register(fastifyNoIcon.default)
 
   await app.register(fastifySwagger, {
     transform: createJsonSchemaTransform({
@@ -164,7 +167,7 @@ export async function getApp(
     await app.register(metricsPlugin, {
       bindAddress: appConfig.bindAddress,
       errorObjectResolver: resolveGlobalErrorLogObject,
-      loggerOptions: loggerConfig,
+      logger,
       disablePrometheusRequestLogging: true,
     })
   }
@@ -195,13 +198,14 @@ export async function getApp(
   app.after(() => {
     // Register routes
     const { routes } = getRoutes()
-    routes.forEach((route) => app.withTypeProvider<ZodTypeProvider>().route(route))
+    routes.forEach((route) => {
+      app.withTypeProvider<ZodTypeProvider>().route(route)
+    })
 
     // Graceful shutdown hook
     if (!isDevelopment()) {
-      app.gracefulShutdown((signal, next) => {
+      app.gracefulShutdown(() => {
         app.log.info('Starting graceful shutdown')
-        next()
       })
     }
   })
@@ -212,7 +216,7 @@ export async function getApp(
       await runAllHealthchecks(app)
     }
   } catch (err) {
-    app.log.error('Error while initializing app: ', err)
+    app.log.error({ error: stdSerializers.err(err as Error) }, 'Error while initializing app')
     throw err
   }
 

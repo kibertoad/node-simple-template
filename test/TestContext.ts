@@ -3,13 +3,12 @@ import { NewRelicTransactionManager } from '@lokalise/fastify-extras'
 import { globalLogger } from '@lokalise/node-core'
 import type { AwilixContainer } from 'awilix'
 import { asFunction, createContainer } from 'awilix'
-import type { FastifyInstance } from 'fastify'
-import merge from 'ts-deepmerge'
-
-import type { Config } from '../src/infrastructure/config'
-import { getConfig } from '../src/infrastructure/config'
-import type { DependencyOverrides } from '../src/infrastructure/diConfig'
-import { SINGLETON_CONFIG, registerDependencies } from '../src/infrastructure/diConfig'
+import { merge } from 'ts-deepmerge'
+import type { AppInstance } from '../src/app.js'
+import type { Config } from '../src/infrastructure/config.ts'
+import { getConfig } from '../src/infrastructure/config.ts'
+import type { DependencyOverrides } from '../src/infrastructure/diConfig.ts'
+import { registerDependencies, SINGLETON_CONFIG } from '../src/infrastructure/diConfig.ts'
 
 type NestedPartial<T> = {
   [P in keyof T]?: NestedPartial<T[P]>
@@ -29,8 +28,8 @@ export function createTestContext(
     injectionMode: 'PROXY',
   })
 
-  const fakeApp: Partial<FastifyInstance> = {
-    newrelicTransactionManager: new NewRelicTransactionManager(false),
+  const fakeApp: Partial<AppInstance> = {
+    newrelicTransactionManager: NewRelicTransactionManager.createDisabled(),
   }
 
   const dependencies = configOverrides
@@ -45,7 +44,7 @@ export function createTestContext(
   registerDependencies(
     diContainer,
     {
-      app: fakeApp as FastifyInstance,
+      app: fakeApp as AppInstance,
       logger: globalLogger,
     },
     dependencies,

@@ -1,17 +1,15 @@
-import { globalLogger } from '@lokalise/node-core'
+import { type CommonLogger, globalLogger } from '@lokalise/node-core'
 import type { AwilixContainer, Resolver } from 'awilix'
 import { Lifetime } from 'awilix'
-import type { FastifyInstance, FastifyBaseLogger } from 'fastify'
-
-import type { UsersModuleDependencies } from '../modules/users/diConfig'
-import { resolveUsersConfig } from '../modules/users/diConfig'
-
-import type { CommonDependencies } from './commonDiConfig'
-import { resolveCommonDiConfig } from './commonDiConfig'
+import type { AppInstance } from '../app.js'
+import type { UsersModuleDependencies } from '../modules/users/diConfig.ts'
+import { resolveUsersConfig } from '../modules/users/diConfig.ts'
+import type { CommonDependencies } from './commonDiConfig.ts'
+import { resolveCommonDiConfig } from './commonDiConfig.ts'
 
 export type ExternalDependencies = {
-  app?: FastifyInstance
-  logger: FastifyBaseLogger
+  app?: AppInstance
+  logger: CommonLogger
 }
 export const SINGLETON_CONFIG = { lifetime: Lifetime.SINGLETON }
 
@@ -42,7 +40,7 @@ export function registerDependencies(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: We neither know, nor care about the type here
 type DiConfig = Record<keyof Dependencies, Resolver<any>>
 
 export type Dependencies = CommonDependencies & UsersModuleDependencies

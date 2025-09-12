@@ -1,13 +1,11 @@
-import { buildClient, sendGet } from '@lokalise/node-core'
-import type { FastifyInstance } from 'fastify'
-
-import { createTestContext } from '../test/TestContext'
-
-import { getApp } from './app'
-import type { Config } from './infrastructure/config'
+import { buildClient, sendGet } from '@lokalise/backend-http-client'
+import { z } from 'zod'
+import { createTestContext } from '../test/TestContext.ts'
+import { type AppInstance, getApp } from './app.ts'
+import type { Config } from './infrastructure/config.ts'
 
 describe('app', () => {
-  let app: FastifyInstance
+  let app: AppInstance
   beforeAll(async () => {
     app = await getApp({
       monitoringEnabled: true,
@@ -35,13 +33,19 @@ describe('app', () => {
 
   describe('metrics', () => {
     it('Returns Prometheus metrics', async () => {
-      const response = await sendGet(buildClient('http://127.0.0.1:9080'), '/metrics')
+      const response = await sendGet(buildClient('http://127.0.0.1:9080'), '/metrics', {
+        requestLabel: 'testRequest',
+        responseSchema: z.any(),
+      })
 
       expect(response.result.statusCode).toBe(200)
     })
 
     it('Returns Prometheus healthcheck metrics', async () => {
-      const response = await sendGet(buildClient('http://127.0.0.1:9080'), '/metrics')
+      const response = await sendGet(buildClient('http://127.0.0.1:9080'), '/metrics', {
+        requestLabel: 'testRequest',
+        responseSchema: z.any(),
+      })
 
       expect(response.result.statusCode).toBe(200)
       expect(response.result.body).toContain('mysql_availability 1')
