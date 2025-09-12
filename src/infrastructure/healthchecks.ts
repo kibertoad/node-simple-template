@@ -7,9 +7,9 @@ import type {
 } from '@lokalise/fastify-extras'
 import type { Either } from '@lokalise/node-core'
 import { executeSettleAllAndHandleGlobalErrors } from '@lokalise/node-core'
-import type { FastifyInstance } from 'fastify'
+import type { AppInstance } from '../app.js'
 
-export const wrapHealthCheck = (app: FastifyInstance, healthCheck: HealthChecker) => {
+export const wrapHealthCheck = (app: AppInstance, healthCheck: HealthChecker) => {
   return async () => {
     const response = await healthCheck(app)
     if (response.error) {
@@ -24,7 +24,7 @@ export const wrapHealthCheckForPrometheus = (
 ): PrometheusHealthCheck => {
   return {
     name: healthcheckName,
-    checker: async (app: FastifyInstance): Promise<HealthcheckResult> => {
+    checker: async (app: AppInstance): Promise<HealthcheckResult> => {
       const startTime = Date.now()
       const response = await healthCheck(app)
       const checkTimeInMsecs = Date.now() - startTime
@@ -59,6 +59,6 @@ export const dbHealthCheck: HealthChecker = async (app): Promise<Either<Error, t
   return { result: true }
 }
 
-export async function runAllHealthchecks(app: FastifyInstance) {
+export function runAllHealthchecks(app: AppInstance) {
   return executeSettleAllAndHandleGlobalErrors([wrapHealthCheck(app, dbHealthCheck)()], false)
 }

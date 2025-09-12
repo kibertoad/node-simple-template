@@ -4,14 +4,14 @@ import { asClass, asFunction, Lifetime } from 'awilix'
 import type { InMemoryCacheConfiguration, LoaderConfig } from 'layered-loader'
 import { Loader } from 'layered-loader'
 
-import type { CommonDependencies } from '../../infrastructure/commonDiConfig'
-import type { DIOptions } from '../../infrastructure/diConfig'
-import { SINGLETON_CONFIG } from '../../infrastructure/diConfig'
+import type { CommonDependencies } from '../../infrastructure/commonDiConfig.ts'
+import type { DIOptions } from '../../infrastructure/diConfig.ts'
+import { SINGLETON_CONFIG } from '../../infrastructure/diConfig.ts'
 
-import { UserDataSource } from './datasources/UserDataSource'
-import { UserRepository } from './repositories/UserRepository'
-import { PermissionsService } from './services/PermissionsService'
-import { UserService } from './services/UserService'
+import { UserDataSource } from './datasources/UserDataSource.ts'
+import { UserRepository } from './repositories/UserRepository.ts'
+import { PermissionsService } from './services/PermissionsService.ts'
+import { UserService } from './services/UserService.ts'
 
 const IN_MEMORY_CACHE_TTL = 1000 * 60 * 5
 const IN_MEMORY_TTL_BEFORE_REFRESH = 1000 * 25
@@ -22,7 +22,7 @@ const IN_MEMORY_CONFIGURATION_BASE: InMemoryCacheConfiguration = {
   cacheType: 'fifo-object',
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: We neither know, nor care about the type here
 type UsersDiConfig = Record<keyof UsersModuleDependencies, Resolver<any>>
 
 export type UsersModuleDependencies = {

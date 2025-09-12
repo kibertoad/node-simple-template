@@ -7,14 +7,13 @@ import type { FastifyBaseLogger } from 'fastify'
 import type P from 'pino'
 import { pino } from 'pino'
 
-import { FakeStoreApiClient } from '../integrations/FakeStoreApiClient'
+import { FakeStoreApiClient } from '../integrations/FakeStoreApiClient.ts'
+import type { Config } from './config.ts'
+import { getConfig } from './config.ts'
+import type { ExternalDependencies } from './diConfig.ts'
+import { SINGLETON_CONFIG } from './diConfig.ts'
 
-import { getConfig } from './config'
-import type { Config } from './config'
-import type { ExternalDependencies } from './diConfig'
-import { SINGLETON_CONFIG } from './diConfig'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: We neither know, nor care about the type here
 export type CommonDiConfig = Record<keyof CommonDependencies, Resolver<any>>
 
 export function resolveCommonDiConfig(
@@ -47,7 +46,7 @@ export function resolveCommonDiConfig(
 
     errorReporter: asFunction(() => {
       return {
-        report: (report) => console.error(report),
+        report: (_report) => {},
       } satisfies ErrorReporter
     }),
     fakeStoreApiClient: asClass(FakeStoreApiClient, SINGLETON_CONFIG),

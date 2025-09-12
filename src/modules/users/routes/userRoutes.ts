@@ -1,13 +1,17 @@
-import type { Routes } from 'src/modules/routes'
-
-import { deleteUser, getUser, patchUpdateUser, postCreateUser } from '../controllers/UserController'
+import type { Routes } from '../../routes.js'
+import {
+  deleteUser,
+  getUser,
+  patchUpdateUser,
+  postCreateUser,
+} from '../controllers/UserController.ts'
 import {
   CREATE_USER_BODY_SCHEMA,
   DELETE_USER_PARAMS_SCHEMA,
   GET_USER_PARAMS_SCHEMA,
   UPDATE_USER_BODY_SCHEMA,
   UPDATE_USER_PARAMS_SCHEMA,
-} from '../schemas/userSchemas'
+} from '../schemas/userSchemas.ts'
 
 export const getUserRoutes = (): {
   routes: Routes

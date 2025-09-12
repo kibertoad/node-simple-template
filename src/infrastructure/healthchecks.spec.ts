@@ -1,10 +1,9 @@
 import type { PrismaClient } from '@prisma/client'
 import { asFunction } from 'awilix'
-import type { FastifyInstance } from 'fastify'
 
-import { getApp } from '../app'
+import { type AppInstance, getApp } from '../app.ts'
 
-import { dbHealthCheck } from './healthchecks'
+import { dbHealthCheck } from './healthchecks.ts'
 
 const createPrismaMock = (shouldSucceed: boolean) =>
   ({
@@ -19,7 +18,7 @@ const createPrismaMock = (shouldSucceed: boolean) =>
   }) as Pick<PrismaClient, '$queryRaw'>
 
 describe('healthcheck', () => {
-  let app: FastifyInstance
+  let app: AppInstance
   beforeEach(async () => {
     app = await getApp()
   })
