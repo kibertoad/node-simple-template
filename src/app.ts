@@ -5,7 +5,6 @@ import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix'
 import { fastifyCors } from '@fastify/cors'
 import fastifyHelmet from '@fastify/helmet'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
 import {
   getRequestIdFastifyAppConfig,
   healthcheckMetricsPlugin,
@@ -14,6 +13,7 @@ import {
   requestContextProviderPlugin,
 } from '@lokalise/fastify-extras'
 import { type CommonLogger, resolveGlobalErrorLogObject, resolveLogger } from '@lokalise/node-core'
+import scalarFastifyApiReference from '@scalar/fastify-api-reference'
 import type { AwilixContainer } from 'awilix'
 import type { FastifyInstance } from 'fastify'
 import fastify from 'fastify'
@@ -111,7 +111,6 @@ export async function getApp(
       skipList: [
         '/documentation/',
         '/documentation/initOAuth',
-        '/documentation/json',
         '/documentation/uiConfig',
         '/documentation/yaml',
         '/documentation/*',
@@ -144,7 +143,9 @@ export async function getApp(
     },
   })
 
-  await app.register(fastifySwaggerUi)
+  await app.register(scalarFastifyApiReference, {
+    routePrefix: '/documentation',
+  })
   await app.register(fastifyAwilixPlugin, {
     disposeOnClose: true,
     asyncDispose: true,
