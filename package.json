@@ -8,7 +8,7 @@
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
         "copy:config": "node -e \"const fs=require('fs');fs.copyFileSync('.env.default','.env')\"",
-        "test": "cross-env DATABASE_URL=postgresql://testuser:testpass@localhost:25432/test_db_tests vitest",
+        "test": "vitest",
         "test:migrate": "cross-env DATABASE_URL=postgresql://testuser:testpass@localhost:25432/test_db_tests prisma migrate reset --force",
         "test:coverage": "npm test -- --coverage",
         "test:ci": "npm run copy:config && npm run test:migrate && npm run test:coverage",
