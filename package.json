@@ -7,7 +7,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
-      "copy:config": "cpy --rename=.env ./.env.default ./",
+        "copy:config": "cpy --rename=.env ./.env.default ./",
         "test": "cross-env DATABASE_URL=postgresql://testuser:testpass@localhost:25432/test_db_tests vitest",
         "test:migrate": "cross-env DATABASE_URL=postgresql://testuser:testpass@localhost:25432/test_db_tests prisma migrate reset --force",
         "test:coverage": "npm test -- --coverage",
