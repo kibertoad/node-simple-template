@@ -37,7 +37,7 @@
         "@lokalise/zod-extras": "^3.0.0",
         "@prisma/client": "^6.16.1",
         "@prisma/instrumentation": "^6.16.1",
-        "@scalar/fastify-api-reference": "^1.35.6",
+        "@scalar/fastify-api-reference": "^1.35.7",
         "awilix": "^12.0.5",
         "awilix-manager": "^6.1.0",
         "fastify": "^5.6.0",
