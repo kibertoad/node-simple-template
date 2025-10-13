@@ -55,7 +55,7 @@
     },
     "devDependencies": {
         "@types/node": "^24.7.2",
-        "@biomejs/biome": "2.2.5",
+        "@biomejs/biome": "2.2.6",
         "@lokalise/biome-config": "^3.1.0",
         "@lokalise/tsconfig": "^3.0.0",
         "@readme/openapi-parser": "^5.0.2",
