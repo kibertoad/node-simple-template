@@ -27,10 +27,10 @@
         "docs:validate": "cross-env NODE_ENV=production node --env-file-if-exists=.env scripts/validateEnvVarDoc.ts"
     },
     "dependencies": {
-        "@fastify/awilix": "^8.0.0",
+        "@fastify/awilix": "^8.1.0",
         "@fastify/cors": "^11.1.0",
         "@fastify/helmet": "^13.0.2",
-        "@fastify/swagger": "^9.6.0",
+        "@fastify/swagger": "^9.6.1",
         "@lokalise/backend-http-client": "^9.0.0",
         "@lokalise/fastify-extras": "^30.2.1",
         "@lokalise/node-core": "^14.4.2",
