@@ -61,7 +61,7 @@
         "@readme/openapi-parser": "^5.4.0",
         "@vitest/coverage-v8": "^4.0.16",
         "cross-env": "^10.1.0",
-        "ioredis": "^5.8.2",
+        "ioredis": "^5.9.0",
         "mockttp": "^4.2.1",
         "prisma": "^6.19.0",
         "ts-deepmerge": "^7.0.3",
