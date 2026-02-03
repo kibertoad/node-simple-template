@@ -34,7 +34,7 @@
         "@lokalise/backend-http-client": "^9.0.0",
         "@lokalise/fastify-extras": "^30.4.0",
         "@lokalise/node-core": "^14.7.0",
-        "@lokalise/zod-extras": "^3.0.0",
+        "@lokalise/zod-extras": "^3.0.1",
         "@prisma/client": "^6.19.0",
         "@prisma/instrumentation": "^6.19.0",
         "@scalar/fastify-api-reference": "^1.38.1",
