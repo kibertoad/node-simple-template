@@ -54,7 +54,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
-        "@types/node": "^25.3.0",
+        "@types/node": "^25.3.3",
         "@biomejs/biome": "2.4.4",
         "@lokalise/biome-config": "^3.1.1",
         "@lokalise/tsconfig": "^3.1.0",
