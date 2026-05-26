@@ -64,7 +64,7 @@
         "ioredis": "^5.10.1",
         "mockttp": "^4.4.1",
         "prisma": "^6.19.0",
-        "ts-deepmerge": "^7.0.3",
+        "ts-deepmerge": "^8.0.0",
         "typescript": "6.0.3",
         "vitest": "^4.0.4",
         "yaml": "^2.9.0"
