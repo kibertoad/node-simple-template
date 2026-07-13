@@ -28,9 +28,9 @@
     },
     "dependencies": {
         "@fastify/awilix": "^8.2.0",
-        "@fastify/cors": "^11.2.0",
-        "@fastify/helmet": "^13.0.2",
-        "@fastify/swagger": "^9.7.0",
+        "@fastify/cors": "^11.3.0",
+        "@fastify/helmet": "^13.1.0",
+        "@fastify/swagger": "^9.8.1",
         "@lokalise/backend-http-client": "^9.0.0",
         "@lokalise/fastify-extras": "^30.7.2",
         "@lokalise/node-core": "^14.8.1",
