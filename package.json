@@ -67,6 +67,6 @@
         "ts-deepmerge": "^8.0.0",
         "typescript": "7.0.2",
         "vitest": "^5.0.0",
-        "yaml": "^2.9.0"
+        "yaml": "^2.9.1"
     }
 }
