@@ -43,7 +43,7 @@
         "fastify": "^5.12.7",
         "fastify-custom-healthcheck": "^4.0.0",
         "fastify-graceful-shutdown": "^5.0.0",
-        "fastify-metrics": "^14.1.0",
+        "fastify-metrics": "^14.1.1",
         "fastify-no-icon": "^7.0.0",
         "fastify-type-provider-zod": "^7.0.0",
         "layered-loader": "^14.5.3",
