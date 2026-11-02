@@ -27,7 +27,7 @@
         "docs:validate": "cross-env NODE_ENV=production node --env-file-if-exists=.env scripts/validateEnvVarDoc.ts"
     },
     "dependencies": {
-        "@fastify/awilix": "^8.3.1",
+        "@fastify/awilix": "^8.3.2",
         "@fastify/cors": "^11.3.1",
         "@fastify/helmet": "^13.2.0",
         "@fastify/swagger": "^9.9.2",
@@ -43,7 +43,7 @@
         "fastify": "^5.12.7",
         "fastify-custom-healthcheck": "^4.0.0",
         "fastify-graceful-shutdown": "^5.0.0",
-        "fastify-metrics": "^14.1.1",
+        "fastify-metrics": "^15.0.0",
         "fastify-no-icon": "^7.0.0",
         "fastify-type-provider-zod": "^7.0.0",
         "layered-loader": "^14.5.3",
